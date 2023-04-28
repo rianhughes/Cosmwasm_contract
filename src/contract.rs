@@ -5,7 +5,7 @@ use cosmwasm_std::{
 };
 
 use crate::error::ContractError;
-use crate::msg::{BalanceResp, ExecuteMsg, InstantiateMsg, OwnerResp, QueryMsg};
+use crate::msg::{BalanceResp, ExecuteMsg, InstantiateMsg, OwnerResp, QueryMsg,FeeResp};
 use crate::state::{BALANCE, COIN_DENOM, FEE, OWNER};
 
 pub fn instantiate(
@@ -25,12 +25,17 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Owner {} => to_binary(&query_owner(deps)?),
         QueryMsg::Balance { address } => to_binary(&query_balance(deps, address)?),
+        QueryMsg::Fee {} => to_binary(&query_fee(deps)?),
     }
 }
 
 pub fn query_owner(deps: Deps) -> StdResult<OwnerResp> {
     let owner = OWNER.load(deps.storage)?.to_string();
     Ok(OwnerResp { owner })
+}
+pub fn query_fee(deps: Deps) -> StdResult<FeeResp> {
+    let fee = FEE.load(deps.storage)?.to_string();
+    Ok(FeeResp { fee })
 }
 
 pub fn query_balance(deps: Deps, address: String) -> StdResult<BalanceResp> {
@@ -229,6 +234,27 @@ mod tests {
         let owner_resp: OwnerResp =
             from_binary(&query(deps.as_ref(), mock_env(), query_msg).unwrap()).unwrap();
         assert_eq!("owner", owner_resp.owner);
+    }
+
+    #[test]
+    fn test_query_fee() {
+        // Instantiate the contract
+        let instantiate_msg = InstantiateMsg {
+            coin_denom: "sei".to_owned(),
+            owner: "owner".to_owned(),
+            fee: Uint128::new(1),
+        };
+        let mut deps = mock_dependencies();
+        let balance = coins(100, "sei");
+        let info = mock_info(&String::from("some_user"), &balance);
+        let res = instantiate(deps.as_mut(), mock_env(), info, instantiate_msg).unwrap();
+        assert_eq!(0, res.messages.len());
+
+        // query owner address
+        let query_msg = QueryMsg::Fee {};
+        let fee_resp: FeeResp =
+            from_binary(&query(deps.as_ref(), mock_env(), query_msg).unwrap()).unwrap();
+        assert_eq!("1", fee_resp.fee);
     }
 
     #[test]

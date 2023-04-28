@@ -13,12 +13,16 @@ pub struct InstantiateMsg {
 pub enum QueryMsg {
     Owner {},
     Balance {address : String},
-    
+    Fee {},
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct OwnerResp {
     pub owner: String,
+}
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+pub struct FeeResp {
+    pub fee: String,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]

@@ -9,17 +9,16 @@ pub enum ContractError {
     #[error("Not enough balance to withdraw input amount")]
     NotEnoughBalance {},
 
-    #[error("Sender has zero coin")]
-    SenderHasZeroCoin {},
+    #[error("Sender sent less than the fee amount")]
+    SentLessThanFee {},
 
-    #[error("Sender does not have enough coin to make transfer")]
+    #[error("Sender does not have enough coin to make transferand pay fee")]
     NotEnoughCoin {},
-
-    #[error("Sender must send more than zero coin")]
-    InvalidZeroAmount {},
 
     #[error("Sender sent an incorrect coin.")]
     SentIncorrectCoin {},
-
-
+    
+    #[error("Only enough coins to pay recipients either no coins, or an uneven amount of coins (ie transfer_amount = fee + 1")]
+    RecipientPaidZeroOrOneCoin {},
+    
 }

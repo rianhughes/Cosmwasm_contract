@@ -6,6 +6,7 @@ use cosmwasm_std::{Uint128};
 pub struct InstantiateMsg {
     pub owner: String,
     pub coin_denom : String,
+    pub fee : Uint128
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
